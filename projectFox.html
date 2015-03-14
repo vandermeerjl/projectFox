@@ -1,0 +1,497 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>PROJECT FOX</title> <!-- by Dan Zen 2014 - http://danzen.com - free to modify -->
+
+<link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+
+<!-- for Google -->
+<meta name="description" content="Describe App" />
+<meta name="keywords" content="keyword 1, keyword 2" />    
+<meta name="author" content="App Creator" />
+<meta name="copyright" content="App Company" />
+
+<!-- for Facebook -->          
+<meta property="og:title" content="App Title" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="url_to-image_for_facebook" />
+<meta property="og:url" content="url_of_app" />
+<meta property="og:description" content="Describe App - shows in share" />
+
+<!-- for Twitter -->          
+<meta name="twitter:card" content="summary" /> <!-- do not edit this line (must say "summary") -->
+<meta name="twitter:title" content="App Title" />
+<meta name="twitter:description" content="Describe App - shows on Twitter" />
+<meta name="twitter:image" content="url_to-image" />
+
+<!-- for Apple -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon-precomposed" href="url_to_icon_57x57" />
+
+<script>var zon = false; // true for comments from zim code</script>
+<script type="text/javascript" src="http://d309knd7es5f10.cloudfront.net/zim_1.0.js"></script>
+<style>
+	body {margin:0px; padding:0px; background-color:#CF4859;}
+	#myCanvas {position:absolute; background-color:#CF4859;}
+</style>
+
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+
+<!-- include the complete createJS suite
+or can go to createjs.com for individual code 
+
+EaselJS - working with Canvas - drawing and objects
+TweenJS - animation with code
+SoundJS - working with Sound
+PreloadJS - preload images to work with
+
+-->
+
+<script src="http://code.createjs.com/createjs-2013.12.12.min.js"></script>
+
+<script>
+
+window.addEventListener('load', init);
+window.addEventListener('resize', resizeMe);
+
+var stageW = 960;
+var stageH = 640;
+var preload;
+var progress;
+
+function init() {
+
+	// for mobile - pan to the bottom, hides the location bar
+	// need to set a delay though
+	setTimeout(function() {window.scrollTo(0, 1);}, 100); 
+	
+	resizeMe();	
+	stage = new createjs.Stage("myCanvas"); 
+	stage.enableMouseOver(10); // if you need mouse rollover
+	createjs.Touch.enable(stage,true); // added for mobile	
+	
+	makeProgress();
+	
+	/*
+	// activate these at end to add images and sound
+	var contentPath = "content/";
+	var manifest = [{src:"logo.png", id:"logo"}, {src:"pic.png", id:"pic"}]; // array of objects
+	preload = new createjs.LoadQueue(false, contentPath); // use true if on the same server	
+	preload.installPlugin(createjs.Sound); // sound requires this plugin call
+	preload.on("progress", animateProgress); // this will update the progress
+	preload.on("complete", about);	 // call the main code when ready	
+	preload.loadManifest(manifest);		
+	*/	
+	var contentPath = "images/";
+	var manifest = [{src:"foxsprite.png", id:"foxes"}, {src:"bubble.png", id:"bubble"}, {src:"whistle.mp3", id:"whistle"}];
+	preload = new createjs.LoadQueue(false, contentPath);
+	preload.installPlugin(createjs.Sound);
+	preload.loadManifest(manifest);
+	preload.addEventListener("complete", projectFox);
+
+	//projectFox(); // comment this out when you have preload going
+	
+}
+
+function makeProgress() {
+	
+	progress = new createjs.Container();
+	// more code in here to make bar or text or whatever, etc.
+	// we do not animate the progress here - we do that in preloadProgress()
+	stage.addChild(progress);
+	stage.update();
+	
+}
+
+function animateProgress(e) {
+	
+	// zog("progress " + e.target.progress);	
+	// this event runs quite quickly and often
+	// e.target is the preload object in this case
+	// the progress property gives a number from 0-1 representing progress
+	// in percent we would multiply by 100
+	// we would operate on the progress object we established in makeProgress() 
+
+}
+
+	function projectFox() {
+
+		var spritesheet;
+
+		var state;
+		var intro; 
+		var blink;
+		var where;
+		var sleep;
+		var love;
+		var tail;
+		var sing;
+
+		createjs.Ticker.addEventListener("tick", stage);
+	    createjs.Ticker.setFPS(5);
+	    foxanimation();
+
+		function foxanimation() {
+
+		var data = {
+
+		"images": ["images/foxsprite.png"],
+		"frames": [
+
+		    [2, 2, 417, 417], 
+		    [840, 1259, 417, 417],
+		    [2097, 840, 417, 417],
+		    [2935, 421, 417, 417],
+		    [3354, 421, 417, 417],
+		    [2935, 840, 417, 417],
+		    [2935, 1259, 417, 417],
+		    [3354, 840, 417, 417], 
+		    [3354, 1259, 417, 417], 
+		    [2, 421, 417, 417], 
+		    [2, 840, 417, 417], 
+		    [2, 1259, 417, 417], 
+		   	[421, 2, 417, 417], 
+		    [421, 421, 417, 417], 
+		    [421, 840, 417, 417], 
+		    [421, 1259, 417, 417], 
+		    [840, 2, 417, 417], 
+		    [840, 421, 417, 417], 
+		    [840, 840, 417, 417],
+		    [1259, 2, 417, 417], 
+		    [1259, 421, 417, 417], 
+		    [1259, 840, 417, 417], 
+		    [1259, 1259, 417, 417], 
+		    [1678, 2, 417, 417], 
+		    [1678, 421, 417, 417], 
+		    [1678, 840, 417, 417], 
+		    [1678, 1259, 417, 417], 
+		    [2097, 2, 417, 417], 
+		    [2097, 421, 417, 417],  
+		    [2097, 1259, 417, 417], 
+		    [2516, 2, 417, 417], 
+		    [2935, 2, 417, 417], 
+		    [3354, 2, 417, 417], 
+		    [2516, 421, 417, 417], 
+		    [2516, 840, 417, 417], 
+		    [2516, 1259, 417, 417]     
+
+		],
+		"animations": {
+		    
+		    "state":{frames:[0]},
+            "start":{frames:[0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 1, 0], next: false},
+            "blink":{frames:[0, 8, 9, 8], next: false},
+            "sleep":{frames:[11, 12, 13]},
+            "where":{frames:[0, 14, 15, 16, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 14], next: false},
+            "love":{frames:[0, 19, 20, 21, 22, 23, 24, 25, 26], next: false},
+            "tail":{frames:[0, 27, 0, 28, 29, 0, 27, 0, 28, 29], next: false},
+            "sing":{frames:[0, 30, 31, 32, 33, 34, 33, 34, 35, 30], next: false},
+		    
+		}//animation
+		}//data
+
+		spritesheet = new createjs.SpriteSheet(data);
+
+		state = new createjs.Sprite(spritesheet,'state');
+		intro = new createjs.Sprite(spritesheet,'start'); 
+
+		var bubbleContainer = new createjs.Container();
+		var bubble = new createjs.Bitmap("images/bubble.png");
+		bubbleContainer.scaleX=0.5;
+		bubbleContainer.scaleY=0.5;
+		bubbleContainer.x = 300;
+		bubbleContainer.y = stageH-400;
+
+		var helloText = new createjs.Text(); 
+		helloText.textAlign = "center";
+		helloText.textBaseline = "middle";
+		helloText.font = "70px Open Sans";
+		helloText.color = "#FFF";
+		helloText.text = "Hello!";
+
+		helloText.x=325;
+		helloText.y=130;
+
+		stage.addChild(bubbleContainer);
+		bubbleContainer.addChild(bubble);
+
+		bubbleContainer.addChild(helloText);
+
+		bubbleContainer.alpha = 0;
+
+		createjs.Tween.get(bubbleContainer)
+		.to({y:stageH-600, alpha:1}, 1000, createjs.Ease.backOut);
+
+		var spriteContainer = new createjs.Container();
+
+		var spriteBounds = intro.getBounds();
+		spriteContainer.regX = spriteBounds.width/2;
+		spriteContainer.regY = spriteBounds.height/2;
+		spriteContainer.x = stageW/2;
+		spriteContainer.y = stageH-250;
+
+		stage.addChild(spriteContainer);
+		spriteContainer.addChild(intro);
+
+		var blinkClear;
+		var whereClear;
+		var sleepClear;
+
+		intro.on('animationend', startEnd);
+
+	function startEnd () {
+
+		//createjs.Ticker.removeAllEventListeners("tick");
+
+		blinkClear = setTimeout(blinkInterval, 3000);
+	 	whereClear = setTimeout(whereInterval, 10000);
+	 	sleepClear = setTimeout(sleepinterval, 17000);
+
+		spriteContainer.removeAllChildren();
+		spriteContainer.addChild(state);
+
+		bubbleContainer.removeAllChildren();
+
+	 	spriteContainer.addEventListener("click", change);
+	 	spriteContainer.cursor = "pointer";
+	 
+	 } //startend
+
+
+	function blinkInterval () {
+
+		blink = new createjs.Sprite(spritesheet, 'blink');
+
+		spriteContainer.removeAllChildren();
+		spriteContainer.addChild(blink);
+
+		blink.on('animationend', blinkEnd);
+
+		spriteContainer.removeEventListener("click", change);
+		spriteContainer.cursor = "default";
+
+		function blinkEnd () {
+
+				spriteContainer.removeAllChildren();
+				spriteContainer.addChild(state);
+
+				spriteContainer.addEventListener("click", change);
+				spriteContainer.cursor = "pointer";
+
+		}//blinkend
+
+	}//blinkInterval
+
+	function whereInterval () {
+
+		spriteContainer.removeAllChildren();
+
+		where = new createjs.Sprite(spritesheet, 'where');
+
+		spriteContainer.removeEventListener("click", change);
+
+		var whereText = new createjs.Text(); 
+		whereText.textAlign = "center";
+		whereText.textBaseline = "middle";
+		whereText.font = "50px Open Sans";
+		whereText.color = "#FFF";
+		whereText.text = "Are you still there?";
+
+		whereText.x=325;
+		whereText.y=130;
+
+		bubbleContainer.addChild(bubble);
+		bubbleContainer.addChild(whereText);
+
+		bubbleContainer.alpha = 0;
+
+		createjs.Tween.get(bubbleContainer)
+		.to({y:stageH-600, alpha:1}, 1000, createjs.Ease.backOut);
+		//.call(doneAnimation);
+
+		spriteContainer.addChild(where);
+
+		where.on('animationend', whereEnd);
+
+		function whereEnd () {
+
+		 	spriteContainer.removeAllChildren();
+
+			bubbleContainer.removeChild(whereText);
+		 	bubbleContainer.removeChild(bubble);
+
+		 	spriteContainer.addEventListener("click", change);
+		 	spriteContainer.cursor = "pointer";
+
+		 	spriteContainer.addChild(state);
+		 	
+
+		}//whereEnd
+
+	}//whereInterval
+
+	function sleepinterval () {
+
+		spriteContainer.removeAllChildren();
+
+		sleep = new createjs.Sprite(spritesheet, 'sleep');
+
+		spriteContainer.addChild(sleep);
+
+		spriteContainer.removeEventListener("click", change);
+
+		spriteContainer.addEventListener("click", poke, false);
+		spriteContainer.cursor = "pointer";
+
+		var clicks=0;
+
+	    function poke(e){
+	  		clicks++;
+	 		if(clicks == 5){
+	 			console.log("AWAKE!!");
+	 			
+	   			awake();
+	 	  	} //ifpoke
+	 	}//functionpoke
+
+	 	function awake(){
+
+			spriteContainer.removeEventListener("click", poke, false);
+
+			clearTimeout(blinkClear);
+			clearTimeout(whereClear);
+			clearTimeout(sleepClear);
+
+			stage.removeAllChildren();
+			foxanimation();
+
+		  }//awake
+
+	}//sleep interval
+
+	function change () {
+
+		var rand = Math.floor((Math.random() * 10) + 1);
+
+		if (rand >= 7) {
+
+		clearTimeout(blinkClear);
+		clearTimeout(whereClear);
+		clearTimeout(sleepClear);
+
+		spriteContainer.removeAllChildren();
+
+		tail = new createjs.Sprite(spritesheet, 'tail');
+
+		spriteContainer.addChild(tail);
+
+		spriteContainer.removeEventListener("click", change);
+		spriteContainer.cursor = "default";
+
+		tail.on('animationend', function () {
+
+				startEnd();
+				console.log("START OVER");
+
+			}); //tailEnd
+
+
+		} else if (rand <= 3){
+
+		clearTimeout(blinkClear);
+		clearTimeout(whereClear);
+		clearTimeout(sleepClear);
+
+		spriteContainer.removeAllChildren();
+
+		love = new createjs.Sprite(spritesheet, 'love');
+
+		spriteContainer.addChild(love);
+
+		spriteContainer.removeEventListener("click", change);
+		spriteContainer.cursor = "default";
+
+		love.on('animationend', function () {
+
+				startEnd();
+				console.log("START OVER")
+
+			}); //loveEnd
+
+
+		} else {
+
+		clearTimeout(blinkClear);
+		clearTimeout(whereClear);
+		clearTimeout(sleepClear);
+		spriteContainer.removeAllChildren();
+
+		sing = new createjs.Sprite(spritesheet, 'sing');
+
+		spriteContainer.addChild(sing);
+
+		spriteContainer.removeEventListener("click", change);
+		spriteContainer.cursor = "default";
+
+		createjs.Sound.play("whistle");
+
+		sing.on('animationend', function () {
+
+				startEnd();
+
+				console.log("START OVER")
+				
+			}); //singEnd
+
+		}//if change
+		} //change
+
+} // foxanimation
+
+	stage.update();
+
+} //projectFox
+
+function resizeMe() {
+	
+	// strategy:  
+	// design for an average dimension 960 x 640
+	// all your positioning will be based on these dimensions
+	// then scale the whole canvas
+	// and pad the left/right or top/bottom as needed
+	// you can go further into flexive design http://danzen.com/flexive
+	
+	var can = zid("myCanvas");
+	
+	var w = window.innerWidth;
+	var h = window.innerHeight; 	
+	var newH; 
+	var newW;
+	
+	if (w/h >= stageW/stageH) {
+		newH = h;
+		newW = newH*stageW/stageH;	
+	} else {
+		newW = w;
+		newH = newW*stageH/stageW;
+	}
+	
+	can.style.width = newW + "px";
+	can.style.height = newH + "px"; 
+	can.style.left = ((w-newW)/2) + "px";
+	can.style.top = ((h-newH)/2) + "px";	
+}
+
+
+</script>
+
+
+</head>
+
+<body>
+<canvas id="myCanvas" width="960" height="640">alternate content</canvas>
+</body>
+</html>
