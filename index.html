@@ -38,7 +38,7 @@
 	#myCanvas {position:absolute; background-color:#CF4859;}
 </style>
 
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Handlee' rel='stylesheet' type='text/css'>
 
 <!-- include the complete createJS suite
 or can go to createjs.com for individual code 
@@ -61,6 +61,7 @@ var stageW = 960;
 var stageH = 640;
 var preload;
 var progress;
+var loadingText;
 
 function init() {
 
@@ -72,6 +73,18 @@ function init() {
 	stage = new createjs.Stage("myCanvas"); 
 	stage.enableMouseOver(10); // if you need mouse rollover
 	createjs.Touch.enable(stage,true); // added for mobile	
+
+	loadingText = new createjs.Text(); 
+	loadingText.textAlign = "center";
+	loadingText.textBaseline = "middle";
+	loadingText.font = "70px Handlee";
+	loadingText.color = "#FFF";
+	loadingText.text = "Loading!";
+
+	loadingText.x=stageW/2;
+	loadingText.y=stageH/2;
+
+	stage.addChild(loadingText);
 	
 	makeProgress();
 	
@@ -118,6 +131,8 @@ function animateProgress(e) {
 }
 
 	function projectFox() {
+
+		stage.removeChild(loadingText);
 
 		var spritesheet;
 
@@ -208,7 +223,7 @@ function animateProgress(e) {
 		var helloText = new createjs.Text(); 
 		helloText.textAlign = "center";
 		helloText.textBaseline = "middle";
-		helloText.font = "70px Open Sans";
+		helloText.font = "70px Handlee";
 		helloText.color = "#FFF";
 		helloText.text = "Hello!";
 
@@ -296,7 +311,7 @@ function animateProgress(e) {
 		var whereText = new createjs.Text(); 
 		whereText.textAlign = "center";
 		whereText.textBaseline = "middle";
-		whereText.font = "50px Open Sans";
+		whereText.font = "50px Handlee";
 		whereText.color = "#FFF";
 		whereText.text = "Are you still there?";
 
@@ -346,20 +361,49 @@ function animateProgress(e) {
 		spriteContainer.addEventListener("click", poke, false);
 		spriteContainer.cursor = "pointer";
 
+		var sleepNotice = setTimeout(sleepNotice, 3000);
+
+		var sleepText;
+		
+		function sleepNotice () {
+
+			clearTimeout(sleepNotice);
+
+			sleepText = new createjs.Text(); 
+			sleepText.textAlign = "center";
+			sleepText.textBaseline = "middle";
+			sleepText.font = "50px Handlee";
+			sleepText.color = "#FFF";
+			sleepText.text = "(click 3 times to wake me!)";
+
+			sleepText.x=325;
+			sleepText.y=130;
+
+			bubbleContainer.addChild(sleepText);
+
+			bubbleContainer.alpha = 0;
+
+			createjs.Tween.get(bubbleContainer)
+			.to({y:stageH-600, alpha:1}, 1000, createjs.Ease.backOut);
+
+		}
+
 		var clicks=0;
 
 	    function poke(e){
 	  		clicks++;
-	 		if(clicks == 5){
+	 		if(clicks == 3){
 	 			console.log("AWAKE!!");
-	 			
 	   			awake();
 	 	  	} //ifpoke
+
 	 	}//functionpoke
 
 	 	function awake(){
 
 			spriteContainer.removeEventListener("click", poke, false);
+
+			bubbleContainer.removeChild(sleepText);
 
 			clearTimeout(blinkClear);
 			clearTimeout(whereClear);
